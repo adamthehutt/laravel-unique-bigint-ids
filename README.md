@@ -9,12 +9,13 @@ Install using composer:
 composer require adamthehutt/laravel-unique-bigint-ids
 ```
 
-To use this package with a model, just use the trait:
+To use this package with a model, just use the contract and the trait:
 
 ```php
+use AdamTheHutt\LaravelUniqueBigintIds\Contracts\IdGenerator;
 use AdamTheHutt\LaravelUniqueBigintIds\GeneratesIdsTrait;
 
-class MyModel extends Model
+class MyModel extends Model implements IdGenerator
 {
     use GeneratesIdsTrait;
 ```
@@ -24,10 +25,8 @@ If you are going to use the trait with existing models, then you'll need to
 create and run migrations to make sure the relevant primary and foreign keys
 are all unsigned 64-bit integers without auto-increment, e.g.,
 ```php
-
 $table->bigInteger("id")->unsigned()->primary();
 $table->bigInteger("foreign_id")->unsigned();
-
 ```
 
 ### What's wrong with UUIDs?

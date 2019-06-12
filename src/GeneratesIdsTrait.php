@@ -7,16 +7,12 @@ use AdamTheHutt\LaravelUniqueBigintIds\Contracts\IdGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 /**
  * @mixin Model
  */
 trait GeneratesIdsTrait
 {
-    /** @var array */
-    protected $observables = ['constructed'];
-
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -26,6 +22,10 @@ trait GeneratesIdsTrait
 
     public static function bootGeneratesIdsTrait(): void
     {
+        app('events')->listen('eloquent.booted: '.static::class, function(Model $model){
+            $model->addObservableEvents('constructed');
+        });
+
         static::registerModelEvent('constructed', function (IdGenerator $model) {
             isset($model->id) || $model->generateId();
         });
@@ -33,10 +33,12 @@ trait GeneratesIdsTrait
 
     public function generateId(): int
     {
-        $strategy = Config::get("unique-bigint-ids.strategy");
-        $method   = "generateIdUsing".Str::studly($strategy);
-
-        return $this->attributes["id"] = $this->$method();
+        switch (Config::get("unique-bigint-ids.strategy")) {
+            case "uuid_short":
+                return $this->attributes["id"] = $this->generateIdUsingUuidShort();
+            default:
+                return $this->attributes["id"] = $this->generateIdUsingTimestamp();
+        }
     }
 
     /**
@@ -56,6 +58,26 @@ trait GeneratesIdsTrait
         $str = (string) $this->attributes['id'];
 
         return substr($str, 0, 10)."-".substr($str, 10, 6)."-".substr($str, 16, 2);
+    }
+
+    /**
+     * Javascript can't handle numbers greater than 53 bits, which means it will
+     * choke on the big bad 64-bit IDs we're generating. Best to convert them to
+     * strings when serializing to JSON.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $array = parent::jsonSerialize();
+
+        $maxJavascriptInt = 2**53;
+        foreach ($array as $key => $value) {
+            if (is_int($value) && $value > $maxJavascriptInt) {
+                $array[$key] = (string) $value;
+            }
+        }
+        return $array;
     }
 
     private function generateIdUsingTimestamp(): int
