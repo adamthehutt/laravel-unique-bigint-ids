@@ -1,0 +1,31 @@
+{
+    "name": "adamthehutt/laravel-unique-bigint-ids",
+    "description": "Application-wide unique bigint IDs for eloquent models. IDs are generated at the application level which improves relation-handling for not-yet-persisted models.",
+    "type": "library",
+    "require": {
+        "php": ">=7.3",
+        "illuminate/support": ">=5.8",
+        "illuminate/database": ">=5.8"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adam Huttler",
+            "email": "adam.huttler@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "AdamTheHutt\\LaravelUniqueBigintIds\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AdamTheHutt\\LaravelUniqueBigintIds\\LaravelUniqueBigintIdsServiceProvider"
+            ]
+        }
+    }
+}
