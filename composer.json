@@ -7,6 +7,10 @@
         "illuminate/support": ">=5.8",
         "illuminate/database": ">=5.8"
     },
+    "require-dev": {
+        "phpunit/phpunit": "8.2.1",
+        "orchestra/testbench": "^3.8"
+    },
     "license": "MIT",
     "authors": [
         {
@@ -19,6 +23,11 @@
     "autoload": {
         "psr-4": {
             "AdamTheHutt\\LaravelUniqueBigintIds\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AdamTheHutt\\LaravelUniqueBigintIds\\Tests\\": "tests/"
         }
     },
     "extra": {
