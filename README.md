@@ -9,6 +9,11 @@ Install using composer:
 composer require adamthehutt/laravel-unique-bigint-ids
 ```
 
+Then publish the configuration:
+``` bash
+php artisan vendor:publish
+```
+
 To use this package with a model, just use the contract and the trait:
 
 ```php
