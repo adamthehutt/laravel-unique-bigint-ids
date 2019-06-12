@@ -31,7 +31,10 @@ trait GeneratesIdsTrait
         });
     }
 
-    public function generateId(): int
+    /**
+     * @return int
+     */
+    public function generateId()
     {
         switch (Config::get("unique-bigint-ids.strategy")) {
             case "uuid_short":
