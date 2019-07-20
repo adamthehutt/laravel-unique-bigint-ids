@@ -15,6 +15,8 @@ trait GeneratesIdsTrait
 {
     public function __construct(array $attributes = [])
     {
+        $this->incrementing = false;
+        
         parent::__construct($attributes);
 
         $this->fireModelEvent('constructed');
