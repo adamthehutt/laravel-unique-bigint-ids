@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AdamTheHutt\LaravelUniqueBigintIds;
 
+use AdamTheHutt\EloquentConstructedEvent\HasConstructedEvent;
 use AdamTheHutt\LaravelUniqueBigintIds\Contracts\IdGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
@@ -13,12 +14,7 @@ use Illuminate\Support\Facades\DB;
  */
 trait GeneratesIdsTrait
 {
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-
-        $this->fireModelEvent('constructed');
-    }
+    use HasConstructedEvent;
 
     public function initializeGeneratesIdsTrait()
     {
@@ -28,10 +24,6 @@ trait GeneratesIdsTrait
 
     public static function bootGeneratesIdsTrait(): void
     {
-        app('events')->listen('eloquent.booted: '.static::class, function(Model $model){
-            $model->addObservableEvents('constructed');
-        });
-
         static::registerModelEvent('constructed', function (IdGenerator $model) {
             isset($model->id) || $model->generateId();
         });

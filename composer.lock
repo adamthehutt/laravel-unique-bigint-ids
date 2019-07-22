@@ -4,8 +4,49 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d852cb89b40c8ca9e9e9f0d673f7bae6",
+    "content-hash": "cbf50963f3199f841d85d4fd8caedfef",
     "packages": [
+        {
+            "name": "adamthehutt/eloquent-constructed-event",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/adamthehutt/eloquent-constructed-event.git",
+                "reference": "6986b70995fa954bcbac11f769fc24c6ad59dfa3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/adamthehutt/eloquent-constructed-event/zipball/6986b70995fa954bcbac11f769fc24c6ad59dfa3",
+                "reference": "6986b70995fa954bcbac11f769fc24c6ad59dfa3",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">=5.8",
+                "illuminate/support": "^5.8"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^3.8",
+                "phpunit/phpunit": "8.2.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AdamTheHutt\\EloquentConstructedEvent\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adam Huttler",
+                    "email": "adam.huttler@gmail.com"
+                }
+            ],
+            "description": "Eloquent model trait to add a 'constructed' event, which will fire immediately after object construction",
+            "time": "2019-07-22T03:32:04+00:00"
+        },
         {
             "name": "doctrine/inflector",
             "version": "v1.3.0",

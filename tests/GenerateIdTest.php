@@ -47,4 +47,11 @@ class GenerateIdTest extends TestCase
 
         $this->assertCount(100000, $this->ids);
     }
+
+    /** @test */
+    public function it_generates_id_on_construction()
+    {
+        $model = new Thingy();
+        $this->assertNotEmpty($model->id);
+    }
 }

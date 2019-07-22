@@ -5,7 +5,8 @@
     "require": {
         "php": ">=7.3",
         "illuminate/support": ">=5.8",
-        "illuminate/database": ">=5.8"
+        "illuminate/database": ">=5.8",
+        "adamthehutt/eloquent-constructed-event": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "8.2.1",
