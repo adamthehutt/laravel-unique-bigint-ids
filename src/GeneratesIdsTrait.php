@@ -73,11 +73,12 @@ trait GeneratesIdsTrait
         $array = parent::jsonSerialize();
 
         $maxJavascriptInt = 2**53;
-        foreach ($array as $key => $value) {
-            if (is_int($value) && $value > $maxJavascriptInt) {
-                $array[$key] = (string) $value;
+        array_walk_recursive($array, function (&$value, $key) use($maxJavascriptInt) {
+            if (is_int($value) && $value > $maxJavascriptInt ) {
+                settype($value, 'string');
             }
-        }
+        });
+
         return $array;
     }
 

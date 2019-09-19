@@ -1,6 +1,6 @@
 {
     "name": "adamthehutt/laravel-unique-bigint-ids",
-    "description": "This allows for the generation of sequential IDs that can be created before inserting into the database and are virtually (but not totally) guaranteed to be globally unique for the app. Additional benefits come from generating IDs before DB persistence, which streamlines code for, e.g., attaching related recoreds.",
+    "description": "This allows for the generation of sequential IDs that can be created before inserting into the database and are virtually (but not totally) guaranteed to be globally unique for the app. Additional benefits come from generating IDs before DB persistence, which streamlines code for, e.g., attaching related records.",
     "type": "library",
     "require": {
         "php": ">=7.3",
