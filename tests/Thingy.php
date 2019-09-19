@@ -10,4 +10,16 @@ use Illuminate\Database\Eloquent\Model;
 class Thingy extends Model implements IdGenerator
 {
     use GeneratesIdsTrait;
+
+    protected $appends = ['buddy'];
+
+    public function buddy()
+    {
+        return $this->belongsTo(Thingy::class);
+    }
+
+    public function getBuddyAttribute()
+    {
+        return $this->relations['buddy'] ?? null;
+    }
 }
