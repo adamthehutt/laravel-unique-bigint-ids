@@ -22,7 +22,9 @@ trait GeneratesIdsTrait
 
     public static function bootGeneratesIdsTrait(): void
     {
-        static::registerModelEvent('constructed', fn(IdGenerator $model) => $model->attributes['id'] ??= $model->generateId());
+        static::registerModelEvent('constructed', function (IdGenerator $model) {
+            $model->attributes['id'] ??= $model->generateId();
+        });
     }
 
     public function generateId(): int
