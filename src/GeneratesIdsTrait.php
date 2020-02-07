@@ -16,6 +16,8 @@ trait GeneratesIdsTrait
 {
     use HasConstructedEvent;
 
+    private static int $lastId;
+
     public function initializeGeneratesIdsTrait()
     {
         $this->incrementing = false;
@@ -24,22 +26,22 @@ trait GeneratesIdsTrait
 
     public static function bootGeneratesIdsTrait(): void
     {
+        if (!isset(self::$lastId)) {
+            $timestamp = decbin(round(microtime(true) * 1000));                        // 41 bits (eventually 42)
+            $node      = decbin(pow(2,9) - 1 + self::nodeId());                     // 10 bits (node between 1 and 512)
+            $random    = decbin(pow(2,11)- 1 + mt_rand(1, pow(2,11)-1)); // 12 bits
+
+            self::$lastId = bindec($timestamp . $node . $random);
+        }
+
         static::registerModelEvent('constructed', function (IdGenerator $model) {
-            isset($model->id) || $model->generateId();
+            $model->attributes['id'] ??= $model->generateId();
         });
     }
 
-    /**
-     * @return int
-     */
-    public function generateId()
+    public function generateId(): int
     {
-        switch (Config::get("unique-bigint-ids.strategy")) {
-            case "uuid_short":
-                return $this->attributes["id"] = $this->generateIdUsingUuidShort();
-            default:
-                return $this->attributes["id"] = $this->generateIdUsingTimestamp();
-        }
+        return self::$lastId++;
     }
 
     /**
@@ -51,14 +53,13 @@ trait GeneratesIdsTrait
     }
 
     /**
-     * Returns the model ID formatted as a 20-character string:
-     * {seconds}-{microseconds}-{pid}
+     * Returns the model ID formatted as a 21-character string.
      */
     public function humanReadableId(): string
     {
         $str = (string) $this->attributes['id'];
 
-        return substr($str, 0, 10)."-".substr($str, 10, 6)."-".substr($str, 16, 2);
+        return substr($str, 0, 7)."-".substr($str, 7, 7)."-".substr($str, 14, 7);
     }
 
     /**
@@ -68,7 +69,7 @@ trait GeneratesIdsTrait
      *
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $array = parent::jsonSerialize();
 
@@ -82,29 +83,8 @@ trait GeneratesIdsTrait
         return $array;
     }
 
-    private function generateIdUsingTimestamp(): int
+    public static function nodeId(): int
     {
-        static $pid;
-        static $taken = [];
-
-        // Need full microsecond precision
-        ini_set("precision", "16");
-
-        $pid = $pid ?? substr((string) getmypid(), -2);
-        do {
-            $microtime = str_pad(str_replace(".", "", microtime(true)), 16, "0");
-            $stringId  = $microtime . $pid;
-            $id        = (int) $stringId;
-        } while (isset($taken[$id]));
-
-        // Put things back where they belong when you're finished with them
-        ini_restore("precision");
-
-        return $taken[$id] = $id;
-    }
-
-    private function generateIdUsingUuidShort(): int
-    {
-        return DB::selectOne("SELECT UUID_SHORT() as `id`")->id;
+        return Config::get("unique_bigint_ids.node", 1);
     }
 }

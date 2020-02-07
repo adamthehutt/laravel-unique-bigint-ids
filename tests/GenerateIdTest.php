@@ -15,10 +15,10 @@ class GenerateIdTest extends TestCase
     public $sorted = [];
 
     /** @test */
-    public function it_generates_18_plus_digit_ids()
+    public function it_generates_19_digit_ids()
     {
         $model = new Thingy();
-        $this->assertGreaterThanOrEqual(18, strlen((string) $model->id));
+        $this->assertEquals(19, strlen((string) $model->id));
     }
 
     /** @test */

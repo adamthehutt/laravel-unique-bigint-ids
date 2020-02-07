@@ -3,9 +3,9 @@
     "description": "This allows for the generation of sequential IDs that can be created before inserting into the database and are virtually (but not totally) guaranteed to be globally unique for the app. Additional benefits come from generating IDs before DB persistence, which streamlines code for, e.g., attaching related records.",
     "type": "library",
     "require": {
-        "php": ">=7.3",
-        "illuminate/support": "^5.8 | ^6.0",
-        "illuminate/database": "^5.8 | ^6.0",
+        "php": ">=7.4",
+        "illuminate/support": "^6.0",
+        "illuminate/database": "^6.0",
         "adamthehutt/eloquent-constructed-event": "^1.0"
     },
     "require-dev": {
