@@ -15,10 +15,10 @@ class GenerateIdTest extends TestCase
     public $sorted = [];
 
     /** @test */
-    public function it_generates_19_digit_ids()
+    public function it_generates_18_digit_or_longer_ids()
     {
         $model = new Thingy();
-        $this->assertEquals(19, strlen((string) $model->id));
+        $this->assertGreaterThanOrEqual(18, strlen((string) $model->id));
     }
 
     /** @test */
@@ -53,5 +53,16 @@ class GenerateIdTest extends TestCase
     {
         $model = new Thingy();
         $this->assertNotEmpty($model->id);
+    }
+
+    /** @test */
+    public function it_does_not_overwrite()
+    {
+        $model = new Thingy();
+        $id = $model->id;
+
+        $model->__construct();
+
+        $this->assertSame($id, $model->id);
     }
 }

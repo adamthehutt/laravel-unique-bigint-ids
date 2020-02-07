@@ -6,8 +6,6 @@ namespace AdamTheHutt\LaravelUniqueBigintIds;
 use AdamTheHutt\EloquentConstructedEvent\HasConstructedEvent;
 use AdamTheHutt\LaravelUniqueBigintIds\Contracts\IdGenerator;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @mixin Model
@@ -15,8 +13,6 @@ use Illuminate\Support\Facades\DB;
 trait GeneratesIdsTrait
 {
     use HasConstructedEvent;
-
-    private static int $lastId;
 
     public function initializeGeneratesIdsTrait()
     {
@@ -26,22 +22,12 @@ trait GeneratesIdsTrait
 
     public static function bootGeneratesIdsTrait(): void
     {
-        if (!isset(self::$lastId)) {
-            $timestamp = decbin(round(microtime(true) * 1000));                        // 41 bits (eventually 42)
-            $node      = decbin(pow(2,9) - 1 + self::nodeId());                     // 10 bits (node between 1 and 512)
-            $random    = decbin(pow(2,11)- 1 + mt_rand(1, pow(2,11)-1)); // 12 bits
-
-            self::$lastId = bindec($timestamp . $node . $random);
-        }
-
-        static::registerModelEvent('constructed', function (IdGenerator $model) {
-            $model->attributes['id'] ??= $model->generateId();
-        });
+        static::registerModelEvent('constructed', fn(IdGenerator $model) => $model->attributes['id'] ??= $model->generateId());
     }
 
     public function generateId(): int
     {
-        return self::$lastId++;
+        return Engine::generateId();
     }
 
     /**
@@ -53,13 +39,17 @@ trait GeneratesIdsTrait
     }
 
     /**
-     * Returns the model ID formatted as a 21-character string.
+     * Returns the model ID formatted as a chunked/hyphenated string.
      */
     public function humanReadableId(): string
     {
-        $str = (string) $this->attributes['id'];
+        $bin = decbin($this->attributes['id']);
 
-        return substr($str, 0, 7)."-".substr($str, 7, 7)."-".substr($str, 14, 7);
+        $timeBits = substr($bin, 0, strlen($bin)-22);
+        $nodeBits = substr($bin, -22, 10);
+        $randomBits = substr($bin, -12);
+
+        return bindec($timeBits) . '-' . bindec($nodeBits) . '-' . bindec($randomBits);
     }
 
     /**
@@ -81,10 +71,5 @@ trait GeneratesIdsTrait
         });
 
         return $array;
-    }
-
-    public static function nodeId(): int
-    {
-        return Config::get("unique_bigint_ids.node", 1);
     }
 }
