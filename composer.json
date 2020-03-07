@@ -4,8 +4,8 @@
     "type": "library",
     "require": {
         "php": ">=7.3",
-        "illuminate/support": "^5.8 | ^6.0",
-        "illuminate/database": "^5.8 | ^6.0",
+        "illuminate/support": "^5.8 | ^6.0 | ^7.0",
+        "illuminate/database": "^5.8 | ^6.0 | ^7.0",
         "adamthehutt/eloquent-constructed-event": "^1.0"
     },
     "require-dev": {
