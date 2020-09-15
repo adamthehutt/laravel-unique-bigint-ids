@@ -100,6 +100,11 @@ trait GeneratesIdsTrait
         // Put things back where they belong when you're finished with them
         ini_restore("precision");
 
+        // For long running processes, limit maximum array size
+        if (count($taken) >= 1000) {
+            array_shift($taken);
+        }
+
         return $taken[$id] = $id;
     }
 
