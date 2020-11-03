@@ -19,6 +19,14 @@ class LaravelUniqueBigintIdsServiceProvider extends ServiceProvider
         }
     }
 
+    public function register()
+    {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/unique-bigint-ids.php',
+            'unique-bigint-ids'
+        );
+    }
+
     /**
      * Register the package's publishable resources.
      *

@@ -17,6 +17,8 @@ class GenerateIdTest extends TestCase
     /** @test */
     public function it_generates_18_plus_digit_ids()
     {
+        config()->set("unique-bigint-ids.timestamp.javascript_safe", false);
+
         $model = new Thingy();
         $this->assertGreaterThanOrEqual(18, strlen((string) $model->id));
     }

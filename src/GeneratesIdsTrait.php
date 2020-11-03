@@ -70,6 +70,10 @@ trait GeneratesIdsTrait
      */
     public function jsonSerialize()
     {
+        if (config("unique-bigint-ids.timestamp.javascript_safe", false)) {
+            return parent::jsonSerialize();
+        }
+
         $array = parent::jsonSerialize();
 
         $maxJavascriptInt = 2**53;
@@ -87,14 +91,18 @@ trait GeneratesIdsTrait
         static $pid;
         static $taken = [];
 
-        // Need full microsecond precision
-        ini_set("precision", "16");
+        $precision = config("unique-bigint-ids.timestamp.javascript_safe", false)
+            ? 14
+            : 16;
+
+        ini_set("precision", (string) $precision);
 
         $pid = $pid ?? substr((string) getmypid(), -2);
         do {
-            $microtime = str_pad(str_replace(".", "", microtime(true)), 16, "0");
-            $stringId  = $microtime . $pid;
-            $id        = (int) $stringId;
+            $timestamp = microtime(true);
+            $timestampSegment = substr(str_pad(str_replace(".", "", $timestamp), $precision, "0"), 0, $precision);
+            $stringId = $timestampSegment . $pid;
+            $id = (int) $stringId;
         } while (isset($taken[$id]));
 
         // Put things back where they belong when you're finished with them

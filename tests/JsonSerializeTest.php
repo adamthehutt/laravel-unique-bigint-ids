@@ -29,4 +29,15 @@ class JsonSerializeTest extends TestCase
 
         $this->assertIsString($result['buddy']['id']);
     }
+
+    /** @test */
+    public function ignores_if_ids_are_already_safe()
+    {
+        config()->set("unique-bigint-ids.timestamp.javascript_safe", true);
+
+        $model = new Thingy();
+        $result = $model->jsonSerialize();
+
+        $this->assertTrue(is_integer($result['id']));
+    }
 }
