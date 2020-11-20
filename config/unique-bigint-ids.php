@@ -5,7 +5,7 @@ use Carbon\Carbon;
 
 return [
     /**
-     * Options are "timestamp" or "uuid_short"
+     * Options are "timestamp", "uuid_short", or "redis"
      */
     'strategy' => env("UNIQUE_BIGINT_ID_STRATEGY", "timestamp"),
 
