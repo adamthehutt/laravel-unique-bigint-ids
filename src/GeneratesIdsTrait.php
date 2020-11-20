@@ -8,6 +8,7 @@ use AdamTheHutt\LaravelUniqueBigintIds\Contracts\IdGenerator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 /**
  * @mixin Model
@@ -35,6 +36,8 @@ trait GeneratesIdsTrait
     public function generateId()
     {
         switch (Config::get("unique-bigint-ids.strategy")) {
+            case "redis":
+                return $this->attributes["id"] = $this->generateIdUsingRedis();
             case "uuid_short":
                 return $this->attributes["id"] = $this->generateIdUsingUuidShort();
             default:
@@ -119,5 +122,17 @@ trait GeneratesIdsTrait
     private function generateIdUsingUuidShort(): int
     {
         return DB::selectOne("SELECT UUID_SHORT() as `id`")->id;
+    }
+
+    private function generateIdUsingRedis(): int
+    {
+        $redisKey = "laravel-unique-bigint-ids-counter";
+        $id = Redis::incr($redisKey);
+        if ($id < 1000) {
+            $id = $this->generateIdUsingTimestamp();
+            Redis::getset($redisKey, $id);
+        }
+
+        return $id;
     }
 }

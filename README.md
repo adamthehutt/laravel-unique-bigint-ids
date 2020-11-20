@@ -64,12 +64,20 @@ There's a tiny performance boost from avoiding the additional roundtrip to the
 database that comes from calling LAST_INSERT_ID().
 
 ### Configuration / Strategies
-The package provides multiple methods for generating the IDs. The default 
-method is to use the 16 digits of a microsecond timestamp and append the
-last 2 digits of the current process ID. This should work 99.9% of the time. 
-Alternatively, you can edit the config file to set "uuid_short" as the 
+The package provides multiple methods for generating the IDs:
+ 
+- "timestamp" - The default method is to use the 16 digits of a microsecond 
+timestamp and append the last 2 digits of the current process ID. This should 
+work 99.9% of the time. 
+
+- "uuid_short" - You can edit the config file to set "uuid_short" as the 
 generation strategy. This will call the UUID_SHORT() mysql function in your
-database and use the returned value. 
+database and use the returned value.
+
+- "redis" - You can edit the config file to set "redis" as the generation
+strategy. In this case, the Laravel Redis facade will be used to increment 
+and retrieve an incremented ID. If the key is not present, it will be 
+initialized using the timestamp strategy. 
 
 ### Javascript Gotchas
 Javascript barfs on integers larger than 2^53. When serializing models to JSON 

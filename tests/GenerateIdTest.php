@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AdamTheHutt\LaravelUniqueBigintIds\Tests;
 
+use Illuminate\Support\Facades\Redis;
 use Orchestra\Testbench\TestCase;
 
 /**
@@ -55,5 +56,19 @@ class GenerateIdTest extends TestCase
     {
         $model = new Thingy();
         $this->assertNotEmpty($model->id);
+    }
+
+    /** @test */
+    public function it_uses_the_redis_strategy()
+    {
+        $oldStrategy = config("unique-bigint-ids.strategy");
+        config()->set("unique-bigint-ids.strategy", "redis");
+
+        $model = new Thingy();
+
+        $this->assertGreaterThan(10000000, $model->id);
+        $this->assertTrue((bool) Redis::exists("laravel-unique-bigint-ids-counter"));
+
+        config()->set("unique-bigint-ids.strategy", $oldStrategy);
     }
 }
