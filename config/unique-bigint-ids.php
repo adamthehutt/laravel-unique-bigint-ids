@@ -9,6 +9,18 @@ return [
      */
     'strategy' => env("UNIQUE_BIGINT_ID_STRATEGY", "timestamp"),
 
+    /**
+     * When should the ID be generated? The default is a "constructed" event,
+     * which fires immediately after a model is constructed and (if applicable)
+     * hydrated. This can result in a lot of unnecessary calls, however, so an
+     * alternative is to use "creating" (actually any observable event can be
+     * used, but "creating" makes the most sense). In that case, an ID won't be
+     * generated until the model is about to be saved for the first time.
+     * HOWEVER, an ID will be still be generated earlier if code attempts to
+     * access it by calling $model->id.
+     */
+    'event' => env("UNIQUE_BIGINT_ID_EVENT", "constructed"),
+
     'timestamp' => [
 
         /**

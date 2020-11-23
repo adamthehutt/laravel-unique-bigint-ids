@@ -7,6 +7,8 @@ interface IdGenerator
 {
     public function generateId();
 
+    public function generateIdIfMissing();
+
     public function persistedId();
 
     public function humanReadableId();

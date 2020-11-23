@@ -25,9 +25,22 @@ trait GeneratesIdsTrait
 
     public static function bootGeneratesIdsTrait(): void
     {
-        static::registerModelEvent('constructed', function (IdGenerator $model) {
-            isset($model->id) || $model->generateId();
+        $event = config("unique-bigint-ids.event", "constructed");
+
+        static::registerModelEvent($event, function (IdGenerator $model) {
+            $model->generateIdIfMissing();
         });
+    }
+
+    public function getIdAttribute()
+    {
+        return $this->generateIdIfMissing();
+    }
+
+    public function generateIdIfMissing()
+    {
+        return $this->attributes['id']
+            ?? $this->generateId();
     }
 
     /**
