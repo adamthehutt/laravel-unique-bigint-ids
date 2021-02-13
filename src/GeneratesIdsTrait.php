@@ -116,7 +116,7 @@ trait GeneratesIdsTrait
         $pid = $pid ?? substr((string) getmypid(), -2);
         do {
             $timestamp = microtime(true);
-            $timestampSegment = substr(str_pad(str_replace(".", "", $timestamp), $precision, "0"), 0, $precision);
+            $timestampSegment = substr(str_pad(str_replace(".", "", (string) $timestamp), $precision, "0"), 0, $precision);
             $stringId = $timestampSegment . $pid;
             $id = (int) $stringId;
         } while (isset($taken[$id]));
